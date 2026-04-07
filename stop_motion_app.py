@@ -167,7 +167,13 @@ class GarticAnimatorPro:
         self.canvas = tk.Canvas(self.notebook_inner, bg="white", width=650, height=420, highlightthickness=0, cursor="pencil")
         self.canvas.pack()
 
-        # 4. Right Sidebar (Consolidated Project Actions)
+        # Undo/Redo Bar restored below board
+        self.canvas_actions = tk.Frame(self.middle_panel, bg=self.bg_main, pady=5)
+        self.canvas_actions.pack(fill=tk.X)
+        CustomButton(self.canvas_actions, "↩️ Deshacer", self.undo, color="#7d2ae8", width=130, height=35).pack(side=tk.LEFT, expand=True, padx=5)
+        CustomButton(self.canvas_actions, "↪️ Rehacer", self.redo, color="#7d2ae8", width=130, height=35).pack(side=tk.LEFT, expand=True, padx=5)
+
+        # 4. Right Sidebar (Simplified Actions)
         self.right_panel = tk.Frame(self.main_container, bg=self.bg_sidebar, padx=10, pady=15)
         self.right_panel.pack(side=tk.LEFT, fill=tk.Y, padx=(20, 0))
         
@@ -177,8 +183,6 @@ class GarticAnimatorPro:
         tool_btns = [
             ("Anterior", "⏮️", self.prev_frame, "#4834d4"),
             ("Siguiente", "⏭️", self.next_frame, "#4834d4"),
-            ("Deshacer", "↩️", self.undo, "#7d2ae8"),
-            ("Rehacer", "↪️", self.redo, "#7d2ae8"),
             ("Nuevo", "➕", self.add_frame, "#4834d4"),
             ("Foto", "🖼️", self.upload_image, "#4834d4"),
             ("Borrar", "🗑️", self.delete_frame, "#ff4d4d"),

@@ -1,11 +1,13 @@
-# Gartic Animator Pro 🎨🎞️
+# Gartic Animator Pro - Premium Edition 🎨🎞️
 
 Una aplicación de escritorio potente y divertida para crear animaciones **Stop Motion**, desarrollada complemente en Python. Este proyecto destaca por el uso de una **Estructura de Datos Lineal (Lista Doblemente Enlazada)** personalizada para gestionar la secuencia de fotogramas, demostrando la aplicación práctica de conceptos de ingeniería de software en una interfaz gráfica moderna inspirada en *Gartic Phone*.
 
 ## 🚀 Características Principales
 
 - **Motor de Lista Doblemente Enlazada**: Implementación desde cero de una `DoublyLinkedList` para una navegación fluida, inserción y eliminación de fotogramas en tiempo real.
-- **Interfaz "Gartic Style"**: Diseño vibrante y amigable con paneles laterales para herramientas y colores.
+- **Interfaz Premium Rediseñada**: Bordes redondeados, botones personalizados con micro-animaciones y un elegante "Modo Oscuro" en los paneles para mayor contraste.
+- **Onion Skinning (Piel de Cebolla)**: Visualiza una silueta tenue del cuadro anterior mientras dibujas el actual para crear movimientos perfectos.
+- **Control de Velocidad (FPS)**: Ajusta la rapidez de tu animación con un deslizador intuitivo.
 - **Herramientas de Dibujo Pro**:
   - Paleta de 12 colores vibrantes.
   - Ajuste de grosor del pincel.

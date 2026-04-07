@@ -54,10 +54,7 @@ class DoublyLinkedList:
 # --- Custom UI Components ---
 
 class CustomButton(tk.Canvas):
-    """
-    A premium, rounded button with hover effects and animations.
-    """
-    def __init__(self, parent, text, command, color="#7d2ae8", hover_color="#9d4edd", text_color="white", width=120, height=45):
+    def __init__(self, parent, text, command, color="#7d2ae8", hover_color="#9d4edd", text_color="white", width=120, height=35):
         super().__init__(parent, width=width, height=height, bg=parent["bg"], highlightthickness=0, cursor="hand2")
         self.command = command
         self.color = color
@@ -66,8 +63,8 @@ class CustomButton(tk.Canvas):
         self.width = width
         self.height = height
         
-        self.rect = self.draw_rounded_rect(5, 5, width-5, height-5, 10, fill=color)
-        self.label = self.create_text(width/2, height/2, text=text, fill=text_color, font=("Arial", 10, "bold"))
+        self.rect = self.draw_rounded_rect(2, 2, width-2, height-2, 8, fill=color)
+        self.label = self.create_text(width/2, height/2, text=text, fill=text_color, font=("Arial", 9, "bold"))
         
         self.bind("<Enter>", self.on_enter)
         self.bind("<Leave>", self.on_leave)
@@ -77,42 +74,34 @@ class CustomButton(tk.Canvas):
         points = [x1+r, y1, x1+r, y1, x2-r, y1, x2-r, y1, x2, y1, x2, y1+r, x2, y1+r, x2, y2-r, x2, y2-r, x2, y2, x2-r, y2, x2-r, y2, x1+r, y2, x1+r, y2, x1, y2, x1, y2-r, x1, y2-r, x1, y1+r, x1, y1+r, x1, y1]
         return self.create_polygon(points, **kwargs, smooth=True)
 
-    def on_enter(self, event):
-        self.itemconfig(self.rect, fill=self.hover_color)
+    def on_enter(self, event): self.itemconfig(self.rect, fill=self.hover_color)
+    def on_leave(self, event): self.itemconfig(self.rect, fill=self.color)
+    def on_click(self, event): self.command()
 
-    def on_leave(self, event):
-        self.itemconfig(self.rect, fill=self.color)
-
-    def on_click(self, event):
-        self.command()
-
-# --- Gartic Animator Pro (Premium Edition) ---
+# --- Gartic Animator Pro (Compact Version) ---
 
 class GarticAnimatorPro:
     def __init__(self, root):
         self.root = root
-        self.root.title("Gartic Animator Pro - Premium Edition")
-        self.root.geometry("1200x850")
+        self.root.title("Gartic Animator Pro")
+        self.root.geometry("1100x720") # Compact height
         
-        # Premium Palette
-        self.bg_main = "#ff4757"       # Vibrant watermelon
-        self.bg_sidebar = "#2c1e3e"    # Darker, more professional purple
-        self.accent_color = "#ffffff"
-        self.onion_skin_color = "#e0e0e0" # Faint gray for onion skin
+        self.bg_main = "#ff4757"
+        self.bg_sidebar = "#2c1e3e"
+        self.onion_skin_color = "#e0e0e0"
         self.palette = [
             "#000000", "#7f8c8d", "#ffffff", "#ff4757", 
             "#2ed573", "#1e90ff", "#ffa502", "#5352ed", 
             "#e84393", "#00d2d3", "#f9ca24", "#6c5ce7"
         ]
 
-        # Engine & App State
         self.frame_list = DoublyLinkedList()
         self.current_frame_node = self.frame_list.append([])
         self.current_frame_index = 1
         self.current_color = "#000000"
         self.current_size = 5
         self.onion_skin_enabled = tk.BooleanVar(value=True)
-        self.playback_speed = tk.IntVar(value=200) # ms delay
+        self.playback_speed = tk.IntVar(value=200)
         
         self.last_x, self.last_y = None, None
         self.current_stroke_data = []
@@ -123,115 +112,84 @@ class GarticAnimatorPro:
     def setup_ui(self):
         self.root.config(bg=self.bg_main)
         
-        # 1. Header
-        self.header = tk.Frame(self.root, bg=self.bg_main, pady=15)
+        # 1. Header (Smaller)
+        self.header = tk.Frame(self.root, bg=self.bg_main, pady=10)
         self.header.pack(fill=tk.X)
         self.status_label = tk.Label(
             self.header, text=f"CUADRO {self.current_frame_index} / {self.frame_list.size}",
-            font=("Arial", 32, "bold"), fg="white", bg=self.bg_main
+            font=("Arial", 22, "bold"), fg="white", bg=self.bg_main
         )
         self.status_label.pack()
 
         # Main Layout
         self.main_container = tk.Frame(self.root, bg=self.bg_main)
-        self.main_container.pack(fill=tk.BOTH, expand=True, padx=30)
+        self.main_container.pack(fill=tk.BOTH, expand=True, padx=20)
 
         # 2. Left Sidebar (Palette & Settings)
-        self.left_panel = tk.Frame(self.main_container, bg=self.bg_sidebar, padx=15, pady=20)
-        self.left_panel.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 25))
+        self.left_panel = tk.Frame(self.main_container, bg=self.bg_sidebar, padx=10, pady=15)
+        self.left_panel.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 20))
         
-        tk.Label(self.left_panel, text="HERRAMIENTAS", font=("Arial", 12, "bold"), bg=self.bg_sidebar, fg="#ff7f50").pack(pady=(0, 15))
+        tk.Label(self.left_panel, text="ESTILO", font=("Arial", 10, "bold"), bg=self.bg_sidebar, fg="#ff7f50").pack(pady=(0, 10))
         
-        # Color Palette
         self.color_grid = tk.Frame(self.left_panel, bg=self.bg_sidebar)
         self.color_grid.pack()
         for i, color in enumerate(self.palette):
             r, c = i // 2, i % 2
-            f = tk.Frame(self.color_grid, bg=color, width=40, height=40, cursor="hand2")
-            f.grid(row=r, column=c, padx=4, pady=4)
+            f = tk.Frame(self.color_grid, bg=color, width=35, height=35, cursor="hand2")
+            f.grid(row=r, column=c, padx=3, pady=3)
             f.bind("<Button-1>", lambda e, clr=color: self.set_color(clr))
 
-        # Size Slider
-        tk.Label(self.left_panel, text="GROSOR", font=("Arial", 10, "bold"), bg=self.bg_sidebar, fg="white").pack(pady=(25, 5))
-        self.size_scale = tk.Scale(
-            self.left_panel, from_=2, to=30, orient=tk.HORIZONTAL, bg=self.bg_sidebar, 
-            fg="white", highlightthickness=0, command=self.set_size
-        )
+        tk.Label(self.left_panel, text="GROSOR", font=("Arial", 9, "bold"), bg=self.bg_sidebar, fg="white").pack(pady=(15, 2))
+        self.size_scale = tk.Scale(self.left_panel, from_=2, to=30, orient=tk.HORIZONTAL, bg=self.bg_sidebar, fg="white", highlightthickness=0, command=self.set_size)
         self.size_scale.set(self.current_size)
         self.size_scale.pack(fill=tk.X)
 
-        # Onion Skin Toggle
-        tk.Checkbutton(
-            self.left_panel, text="Onion Skin", variable=self.onion_skin_enabled,
-            bg=self.bg_sidebar, fg="white", selectcolor=self.bg_sidebar, 
-            activebackground=self.bg_sidebar, font=("Arial", 10), command=self.update_display
-        ).pack(pady=(30, 0))
+        tk.Checkbutton(self.left_panel, text="Onion Skin", variable=self.onion_skin_enabled, bg=self.bg_sidebar, fg="white", selectcolor=self.bg_sidebar, activebackground=self.bg_sidebar, font=("Arial", 9), command=self.update_display).pack(pady=(15, 0))
 
-        # 3. Middle Area (Canvas)
+        # Speed Control in Side Panel
+        tk.Label(self.left_panel, text="VELOCIDAD", font=("Arial", 9, "bold"), bg=self.bg_sidebar, fg="white").pack(pady=(15, 2))
+        self.speed_scale = tk.Scale(self.left_panel, from_=50, to=500, orient=tk.HORIZONTAL, bg=self.bg_sidebar, fg="white", highlightthickness=0, resolution=50, variable=self.playback_speed)
+        self.speed_scale.pack(fill=tk.X)
+
+        # 3. Middle Area (Canvas) - Slightly Smaller
         self.middle_panel = tk.Frame(self.main_container, bg=self.bg_main)
         self.middle_panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Styled Notebook Container
         self.notebook_outer = tk.Frame(self.middle_panel, bg="#000000", padx=2, pady=2)
-        self.notebook_outer.pack(pady=10)
-        
-        self.notebook_inner = tk.Frame(self.notebook_outer, bg="white", padx=15, pady=15)
+        self.notebook_outer.pack(pady=5)
+        self.notebook_inner = tk.Frame(self.notebook_outer, bg="white", padx=10, pady=10)
         self.notebook_inner.pack()
         
-        # Decoration (Paper rings)
         self.rings = tk.Frame(self.notebook_inner, bg="white")
-        self.rings.pack(fill=tk.X)
-        for _ in range(12):
-            tk.Label(self.rings, text="➰", font=("Arial", 10), fg="#bdc3c7", bg="white").pack(side=tk.LEFT, expand=True)
+        self.rings.pack(fill=tk.X, pady=(0, 5))
+        for _ in range(10): tk.Label(self.rings, text="➰", font=("Arial", 8), fg="#bdc3c7", bg="white").pack(side=tk.LEFT, expand=True)
 
-        self.canvas = tk.Canvas(
-            self.notebook_inner, bg="white", width=750, height=500, 
-            highlightthickness=0, cursor="pencil"
-        )
+        self.canvas = tk.Canvas(self.notebook_inner, bg="white", width=650, height=420, highlightthickness=0, cursor="pencil")
         self.canvas.pack()
 
-        # Canvas Undo/Redo Bar
-        self.canvas_actions = tk.Frame(self.middle_panel, bg=self.bg_main, pady=15)
-        self.canvas_actions.pack(fill=tk.X)
+        # 4. Right Sidebar (Consolidated Project Actions)
+        self.right_panel = tk.Frame(self.main_container, bg=self.bg_sidebar, padx=10, pady=15)
+        self.right_panel.pack(side=tk.LEFT, fill=tk.Y, padx=(20, 0))
         
-        CustomButton(self.canvas_actions, "↩️ Deshacer", self.undo, width=140).pack(side=tk.LEFT, expand=True)
-        CustomButton(self.canvas_actions, "↪️ Rehacer", self.redo, width=140).pack(side=tk.LEFT, expand=True)
-
-        # 4. Right Sidebar (Project Tools)
-        self.right_panel = tk.Frame(self.main_container, bg=self.bg_sidebar, padx=15, pady=20)
-        self.right_panel.pack(side=tk.LEFT, fill=tk.Y, padx=(25, 0))
+        tk.Label(self.right_panel, text="ACCIONES", font=("Arial", 10, "bold"), bg=self.bg_sidebar, fg="#0fbcf9").pack(pady=(0, 10))
         
-        tk.Label(self.right_panel, text="PROYECTO", font=("Arial", 12, "bold"), bg=self.bg_sidebar, fg="#0fbcf9").pack(pady=(0, 15))
-        
+        # Consolidate ALL tools here to guarantee visibility
         tool_btns = [
-            ("Anterior", "⏮️", self.prev_frame),
-            ("Siguiente", "⏭️", self.next_frame),
-            ("Nuevo", "➕", self.add_frame),
-            ("Foto", "🖼️", self.upload_image),
-            ("Borrar", "🗑️", self.delete_frame)
+            ("Anterior", "⏮️", self.prev_frame, "#4834d4"),
+            ("Siguiente", "⏭️", self.next_frame, "#4834d4"),
+            ("Deshacer", "↩️", self.undo, "#7d2ae8"),
+            ("Rehacer", "↪️", self.redo, "#7d2ae8"),
+            ("Nuevo", "➕", self.add_frame, "#4834d4"),
+            ("Foto", "🖼️", self.upload_image, "#4834d4"),
+            ("Borrar", "🗑️", self.delete_frame, "#ff4d4d"),
+            ("REPRODUCIR", "▶️", self.play_animation, "#2ed573"),
+            ("GUARDAR GIF", "📥", self.export_gif, "#1e90ff")
         ]
         
-        for name, emoji, cmd in tool_btns:
-            CustomButton(self.right_panel, f"{emoji} {name}", cmd, color="#4834d4", hover_color="#686de0", width=120, height=55).pack(pady=8)
-            
-        # 5. Footer (Playback Controls)
-        self.footer = tk.Frame(self.root, bg=self.bg_main, pady=25)
-        self.footer.pack(fill=tk.X)
-        
-        # Speed Control
-        self.speed_bar = tk.Frame(self.footer, bg=self.bg_main)
-        self.speed_bar.pack(pady=(0, 15))
-        tk.Label(self.speed_bar, text="VELOCIDAD (FPS)", font=("Arial", 10, "bold"), bg=self.bg_main, fg="white").pack(side=tk.LEFT, padx=10)
-        self.speed_scale = tk.Scale(
-            self.speed_bar, from_=50, to=500, orient=tk.HORIZONTAL, bg=self.bg_main, 
-            fg="white", highlightthickness=0, resolution=50, showvalue=False, variable=self.playback_speed
-        )
-        self.speed_scale.pack(side=tk.LEFT)
+        for name, emoji, cmd, clr in tool_btns:
+            CustomButton(self.right_panel, f"{emoji} {name}", cmd, color=clr, hover_color="#686de0", width=140, height=42).pack(pady=5)
 
-        CustomButton(self.footer, "▶️ REPRODUCIR", self.play_animation, color="#2ed573", hover_color="#7bed9f", width=250, height=60).pack(side=tk.LEFT, expand=True, padx=20)
-        CustomButton(self.footer, "📥 DESCARGAR GIF", self.export_gif, color="#1e90ff", hover_color="#70a1ff", width=250, height=60).pack(side=tk.LEFT, expand=True, padx=20)
-
-    # --- Methods ---
+    # --- Logic ---
 
     def set_color(self, color): self.current_color = color
     def set_size(self, size): self.current_size = int(size)
@@ -262,14 +220,11 @@ class GarticAnimatorPro:
         self.canvas.delete("all")
         cw, ch = int(self.canvas.cget("width")), int(self.canvas.cget("height"))
 
-        # 1. Onion Skin (Previous frame in ghost mode)
         if show_onion and self.onion_skin_enabled.get() and self.current_frame_node.prev:
             prev = self.current_frame_node.prev
             for stroke in prev.strokes:
-                for s in stroke:
-                    self.canvas.create_line(s['coords'], width=s['size'], fill=self.onion_skin_color, capstyle=tk.ROUND, smooth=True)
+                for s in stroke: self.canvas.create_line(s['coords'], width=s['size'], fill=self.onion_skin_color, capstyle=tk.ROUND, smooth=True)
 
-        # 2. Background Image
         if self.current_frame_node.image_data:
             img = self.current_frame_node.image_data
             iw, ih = img.size
@@ -279,14 +234,10 @@ class GarticAnimatorPro:
             self.current_frame_node.photo_ref = ImageTk.PhotoImage(resized)
             self.canvas.create_image(cw/2, ch/2, image=self.current_frame_node.photo_ref, anchor=tk.CENTER)
 
-        # 3. Current Strokes
         for stroke in self.current_frame_node.strokes:
-            for s in stroke:
-                self.canvas.create_line(s['coords'], width=s['size'], fill=s['color'], capstyle=tk.ROUND, smooth=True)
-            
+            for s in stroke: self.canvas.create_line(s['coords'], width=s['size'], fill=s['color'], capstyle=tk.ROUND, smooth=True)
         self.status_label.config(text=f"CUADRO {self.current_frame_index} / {self.frame_list.size}")
 
-    # Navigation & Core Logic
     def prev_frame(self):
         if self.current_frame_node.prev:
             self.current_frame_node = self.current_frame_node.prev
@@ -307,7 +258,6 @@ class GarticAnimatorPro:
     def delete_frame(self):
         if self.frame_list.size <= 1:
             self.current_frame_node.strokes = []
-            self.current_frame_node.image_data = None
             self.update_display()
             return
         node_to_del = self.current_frame_node
@@ -343,27 +293,27 @@ class GarticAnimatorPro:
         if node:
             self.current_frame_node = node
             self.current_frame_index = idx
-            self.update_display(show_onion=False) # No onion skin during playback
+            self.update_display(show_onion=False)
             self.root.after(self.playback_speed.get(), lambda: self.playback_traverse(node.next, idx + 1))
-        else: messagebox.showinfo("Gartic", "¡Exportación en pantalla lista!")
+        else: messagebox.showinfo("Gartic", "¡Animación lista!")
 
     def export_gif(self):
         file_path = filedialog.asksaveasfilename(defaultextension=".gif", filetypes=[("GIF", "*.gif")])
         if not file_path: return
         try:
             frames = []
-            canvas_w, canvas_h = int(self.canvas.cget("width")), int(self.canvas.cget("height"))
+            cw, ch = int(self.canvas.cget("width")), int(self.canvas.cget("height"))
             curr = self.frame_list.head
             while curr:
-                frame_img = Image.new("RGB", (canvas_w, canvas_h), "white")
+                frame_img = Image.new("RGB", (cw, ch), "white")
                 draw = ImageDraw.Draw(frame_img)
                 if curr.image_data:
                     img = curr.image_data
                     iw, ih = img.size
-                    ratio = min(canvas_w/iw, canvas_h/ih)
+                    ratio = min(cw/iw, ch/ih)
                     new_size = (int(iw*ratio), int(ih*ratio))
                     resized = img.resize(new_size, Image.Resampling.LANCZOS)
-                    frame_img.paste(resized, ((canvas_w - new_size[0]) // 2, (canvas_h - new_size[1]) // 2))
+                    frame_img.paste(resized, ((cw - new_size[0]) // 2, (ch - new_size[1]) // 2))
                 for stroke in curr.strokes:
                     for s in stroke: draw.line(s['coords'], fill=s['color'], width=s['size'], joint="curve")
                 frames.append(frame_img)
